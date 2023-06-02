@@ -137,3 +137,8 @@ type ZtsTravisResponse struct {
 	AENAM           string  `json:"aenam"`
 	SEL             string  `json:"sel"`
 }
+
+type ZtsTravisFilter struct {
+	StartDate string `json:"start_date" form:"start_date"`
+	EndDate   string `json:"end_date" form:"end_date"`
+}

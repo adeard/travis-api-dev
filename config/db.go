@@ -9,6 +9,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
@@ -40,7 +41,7 @@ func Connect() *gorm.DB {
 
 func MysqlDev(DbUser string, DbPassword string, DbHost string, DbPort string, DbName string, Dbdriver string) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
-	Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 	if err != nil {
 		fmt.Println("Cannot connect to database ", Dbdriver)
 		log.Fatal("Database Connection Error")
@@ -50,7 +51,7 @@ func MysqlDev(DbUser string, DbPassword string, DbHost string, DbPort string, Db
 
 func SqlsvrDev(DbUser string, DbPassword string, DbHost string, DbName string, Dbdriver string) {
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s?database=%s&encrypt=disable&connection+timeout=30", DbUser, DbPassword, DbHost, DbName)
-	Db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 	if err != nil {
 		fmt.Println("Cannot connect to database ", Dbdriver)
 		log.Fatal("Database Connection Error")

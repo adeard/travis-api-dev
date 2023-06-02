@@ -24,7 +24,15 @@ func NewZtsTravisHandler(v1 *gin.RouterGroup, ztsTravisService Service) {
 }
 
 func (h *ztsTravisHandler) GetAll(c *gin.Context) {
-	ztsTravis, err := h.ztsTravisService.GetAll()
+	var input domain.ZtsTravisFilter
+
+	err := c.Bind(&input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ztsTravis, err := h.ztsTravisService.GetAll(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors ": err,

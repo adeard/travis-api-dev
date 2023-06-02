@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	FindAll() ([]domain.ZtsTravis, error)
+	FindAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.ZtsTravis, error)
 	Store(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error)
 	Update(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error)
 	Delete(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error)
@@ -21,9 +21,13 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) FindAll() ([]domain.ZtsTravis, error) {
+func (r *repository) FindAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.ZtsTravis, error) {
 	var ztsTravis []domain.ZtsTravis
-	err := r.db.Find(&ztsTravis).Error
+
+	q := r.db.Debug()
+	q = q.Where("BLDAT between ? and ?", ztsTravisFilter.StartDate, ztsTravisFilter.EndDate)
+
+	err := q.Find(&ztsTravis).Error
 
 	return ztsTravis, err
 }
