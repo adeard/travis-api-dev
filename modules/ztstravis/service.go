@@ -8,7 +8,9 @@ import (
 
 type Service interface {
 	GetAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.ZtsTravis, error)
+	GetDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error)
 	Store(ztsTravisRequest domain.ZtsTravisRequest) (domain.ZtsTravis, error)
+	Update(ZtsTravisIdDetail domain.ZtsTravisIdDetail, ztsTravisUpdateInput domain.ZtsTravisUpdateRequest) (domain.ZtsTravis, error)
 }
 
 type service struct {
@@ -39,6 +41,36 @@ func (s *service) GetAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.ZtsTr
 func (s *service) Store(ztsTravisRequest domain.ZtsTravisRequest) (domain.ZtsTravis, error) {
 
 	ztsTravis, err := s.repository.Store(domain.ZtsTravis(ztsTravisRequest))
+
+	return ztsTravis, err
+}
+
+func (s *service) Update(ztsTravisIdDetail domain.ZtsTravisIdDetail, ztsTravisUpdateInput domain.ZtsTravisUpdateRequest) (domain.ZtsTravis, error) {
+
+	ztsTravis, err := s.repository.FindDetail(ztsTravisIdDetail)
+	if err != nil {
+		return domain.ZtsTravis{}, err
+	}
+
+	if ztsTravisUpdateInput.NOTES_FR_TRANSP != "" {
+		ztsTravis.NOTES_FR_TRANSP = ztsTravisUpdateInput.NOTES_FR_TRANSP
+	}
+
+	if ztsTravisUpdateInput.NOTES_FR_SALES != "" {
+		ztsTravis.NOTES_FR_SALES = ztsTravisUpdateInput.NOTES_FR_SALES
+	}
+
+	newZtsTravis, err := s.repository.Update(ztsTravis, ztsTravisIdDetail)
+
+	return newZtsTravis, err
+}
+
+func (s *service) GetDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error) {
+
+	ztsTravis, err := s.repository.FindDetail(ztsTravisIdDetail)
+	if err != nil {
+		return domain.ZtsTravis{}, err
+	}
 
 	return ztsTravis, err
 }

@@ -16,7 +16,7 @@ func main() {
 	db := config.Connect()
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	router.Use(cors.AllowAll())
 
 	v1 := router.Group("api/v1")
 	auth.NewAuthHandler(v1, auth.AuthRegistry(db))
