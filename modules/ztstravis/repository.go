@@ -33,7 +33,7 @@ func (r *repository) FindAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.Z
 }
 
 func (r *repository) Store(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error) {
-	err := r.db.Create(&ztsTravis).Error
+	err := r.db.Table("ZTS_TRAVIS").Debug().Create(&ztsTravis).Error
 
 	return ztsTravis, err
 }

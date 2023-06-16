@@ -1,7 +1,6 @@
 package ztstravis
 
 import (
-	"fmt"
 	"net/http"
 	"travis/domain"
 
@@ -47,19 +46,27 @@ func (h *ztsTravisHandler) GetAll(c *gin.Context) {
 func (h *ztsTravisHandler) Store(c *gin.Context) {
 	var ztsTravisRequest domain.ZtsTravisRequest
 
-	err := c.ShouldBindJSON(&ztsTravisRequest)
-	if err != nil {
+	c.ShouldBindJSON(&ztsTravisRequest)
 
-		errorMessages := []string{}
+	validate := validator.New()
+	err := validate.Struct(ztsTravisRequest)
+	if err != nil {
+		errorMessages := []interface{}{}
 
 		for _, v := range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on field %s , condition : %s", v.Field(), v.ActualTag())
-			errorMessages = append(errorMessages, errorMessage)
+			errorArray := map[string]string{
+				"field":   v.Field(),
+				"message": v.ActualTag(),
+			}
+
+			errorMessages = append(errorMessages, errorArray)
 		}
 
 		c.JSON(http.StatusBadRequest, gin.H{
-			"errors ": errorMessages,
+			"errors": errorMessages,
 		})
+
+		return
 	}
 
 	ztsTravis, err := h.ztsTravisService.Store(ztsTravisRequest)
@@ -67,6 +74,8 @@ func (h *ztsTravisHandler) Store(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors ": err,
 		})
+
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
