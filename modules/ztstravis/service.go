@@ -9,6 +9,7 @@ import (
 type Service interface {
 	GetAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.ZtsTravis, error)
 	GetDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error)
+	Delete(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error)
 	Store(ztsTravisRequest domain.ZtsTravisRequest) (domain.ZtsTravis, error)
 	Update(ZtsTravisIdDetail domain.ZtsTravisIdDetail, ztsTravisUpdateInput domain.ZtsTravisUpdateRequest) (domain.ZtsTravis, error)
 }
@@ -68,6 +69,21 @@ func (s *service) Update(ztsTravisIdDetail domain.ZtsTravisIdDetail, ztsTravisUp
 func (s *service) GetDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error) {
 
 	ztsTravis, err := s.repository.FindDetail(ztsTravisIdDetail)
+	if err != nil {
+		return domain.ZtsTravis{}, err
+	}
+
+	return ztsTravis, err
+}
+
+func (s *service) Delete(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error) {
+
+	ztsTravis, err := s.repository.FindDetail(ztsTravisIdDetail)
+	if err != nil {
+		return domain.ZtsTravis{}, err
+	}
+
+	_, err = s.repository.Delete(ztsTravisIdDetail)
 	if err != nil {
 		return domain.ZtsTravis{}, err
 	}

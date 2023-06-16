@@ -22,6 +22,7 @@ func NewZtsTravisHandler(v1 *gin.RouterGroup, ztsTravisService Service) {
 	ztsTravis.POST("", handler.Store)
 	ztsTravis.GET(":mandt/:taskid/:vkorg/:werks/:vbeln/:posnr", handler.GetDetail)
 	ztsTravis.PUT(":mandt/:taskid/:vkorg/:werks/:vbeln/:posnr", handler.Update)
+	ztsTravis.DELETE(":mandt/:taskid/:vkorg/:werks/:vbeln/:posnr", handler.Delete)
 }
 
 func (h *ztsTravisHandler) GetAll(c *gin.Context) {
@@ -150,6 +151,29 @@ func (h *ztsTravisHandler) GetDetail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
+		"data": result,
+	})
+}
+
+func (h *ztsTravisHandler) Delete(c *gin.Context) {
+	ztsTravisIdDetail := domain.ZtsTravisIdDetail{
+		MANDT:  c.Param("mandt"),
+		TASKID: c.Param("taskid"),
+		VKORG:  c.Param("vkorg"),
+		WERKS:  c.Param("werks"),
+		VBELN:  c.Param("vbeln"),
+		POSNR:  c.Param("posnr"),
+	}
+	result, err := h.ztsTravisService.Delete(ztsTravisIdDetail)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors ": err,
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{
 		"data": result,
 	})
 }

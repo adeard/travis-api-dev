@@ -11,7 +11,7 @@ type Repository interface {
 	FindDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error)
 	Store(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error)
 	Update(ztsTravis domain.ZtsTravis, ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error)
-	Delete(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error)
+	Delete(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravisIdDetail, error)
 }
 
 type repository struct {
@@ -71,10 +71,36 @@ func (r *repository) Update(ztsTravis domain.ZtsTravis, ztsTravisIdDetail domain
 	return ztsTravis, err
 }
 
-func (r *repository) Delete(ztsTravis domain.ZtsTravis) (domain.ZtsTravis, error) {
-	err := r.db.Table("ZTS_TRAVIS").Delete(ztsTravis).Error
+func (r *repository) Delete(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravisIdDetail, error) {
+	q := r.db.Debug().Table("ZTS_TRAVIS")
 
-	return ztsTravis, err
+	if ztsTravisIdDetail.MANDT != "" {
+		q = q.Where("MANDT = ?", ztsTravisIdDetail.MANDT)
+	}
+
+	if ztsTravisIdDetail.TASKID != "" {
+		q = q.Where("TASKID = ?", ztsTravisIdDetail.TASKID)
+	}
+
+	if ztsTravisIdDetail.VKORG != "" {
+		q = q.Where("VKORG = ?", ztsTravisIdDetail.VKORG)
+	}
+
+	if ztsTravisIdDetail.WERKS != "" {
+		q = q.Where("WERKS = ?", ztsTravisIdDetail.WERKS)
+	}
+
+	if ztsTravisIdDetail.VBELN != "" {
+		q = q.Where("VBELN = ?", ztsTravisIdDetail.VBELN)
+	}
+
+	if ztsTravisIdDetail.POSNR != "" {
+		q = q.Where("POSNR = ?", ztsTravisIdDetail.POSNR)
+	}
+
+	err := q.Delete(ztsTravisIdDetail).Error
+
+	return ztsTravisIdDetail, err
 }
 
 func (r *repository) FindDetail(ztsTravisIdDetail domain.ZtsTravisIdDetail) (domain.ZtsTravis, error) {
