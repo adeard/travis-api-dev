@@ -4,6 +4,7 @@ import (
 	"travis/config"
 	"travis/middlewares"
 	"travis/modules/auth"
+	"travis/modules/vehicletype"
 	"travis/modules/ztstravis"
 	"travis/modules/ztstravisatta"
 	"travis/modules/ztstravislog"
@@ -24,8 +25,9 @@ func main() {
 	v1.Use(middlewares.AuthService_Sample())
 
 	ztstravis.NewZtsTravisHandler(v1, ztstravis.ZtsTravisRegistry(db))
-	ztstravisatta.NewZtsTravisAttaHandler(v1, ztstravisatta.ZtsTravisAttaRegistry(db))
+	vehicletype.NewVehicleTypeHandler(v1, vehicletype.VehicleTypeRegistry(db))
 	ztstravislog.NewZtsTravisLogHandler(v1, ztstravislog.ZtsTravisLogRegistry(db))
+	ztstravisatta.NewZtsTravisAttaHandler(v1, ztstravisatta.ZtsTravisAttaRegistry(db))
 
 	router.Run(":86")
 }
