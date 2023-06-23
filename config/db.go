@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -34,6 +35,8 @@ func Connect() *gorm.DB {
 		SqlsvrDev(DbUser, DbPassword, DbHost, DbName, Dbdriver)
 	case "mysql":
 		MysqlDev(DbUser, DbPassword, DbHost, DbPort, DbName, Dbdriver)
+	case "postgres":
+		PostgresDev(DbUser, DbPassword, DbHost, DbPort, DbName, Dbdriver)
 	}
 
 	return Db
@@ -54,6 +57,15 @@ func SqlsvrDev(DbUser string, DbPassword string, DbHost string, DbName string, D
 	Db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 	if err != nil {
 		fmt.Println("Cannot connect to database ", Dbdriver)
+		log.Fatal("Database Connection Error")
+	}
+}
+
+func PostgresDev(DbUser string, DbPassword string, DbHost string, DbPort string, DbName string, DbDriver string) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", DbHost, DbUser, DbPassword, DbName, DbPort)
+	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+	if err != nil {
+		fmt.Println("Cannot connect to database", DbDriver)
 		log.Fatal("Database Connection Error")
 	}
 }
