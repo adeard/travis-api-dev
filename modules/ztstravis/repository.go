@@ -28,6 +28,10 @@ func (r *repository) FindAll(ztsTravisFilter domain.ZtsTravisFilter) ([]domain.Z
 	q := r.db.Debug()
 	q = q.Where("BLDAT between ? and ?", ztsTravisFilter.StartDate, ztsTravisFilter.EndDate)
 
+	if ztsTravisFilter.TaskStatus != "" {
+		q = q.Where("TASK_STATUS = ?", ztsTravisFilter.TaskStatus)
+	}
+
 	err := q.Find(&ztsTravis).Error
 
 	return ztsTravis, err

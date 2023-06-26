@@ -143,8 +143,9 @@ type ZtsTravisResponse struct {
 }
 
 type ZtsTravisFilter struct {
-	StartDate string `json:"start_date" form:"start_date"`
-	EndDate   string `json:"end_date" form:"end_date"`
+	StartDate  string `json:"start_date" form:"start_date"`
+	EndDate    string `json:"end_date" form:"end_date"`
+	TaskStatus string `json:"task_status" form:"task_status"`
 }
 
 type ZtsTravisIdDetail struct {
